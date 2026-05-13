@@ -1,0 +1,348 @@
+const themeBtn = document.getElementById('themeBtn');
+const scanBtn = document.getElementById('scanBtn');
+const inputText = document.getElementById('inputText');
+
+const gauge = document.getElementById('gauge');
+const gaugeScore = document.getElementById('gaugeScore');
+
+const scoreStat = document.getElementById('scoreStat');
+const flagsStat = document.getElementById('flagsStat');
+const verdictStat = document.getElementById('verdictStat');
+const scansStat = document.getElementById('scansStat');
+
+const statusTitle = document.getElementById('statusTitle');
+const statusText = document.getElementById('statusText');
+
+const resultPill = document.getElementById('resultPill');
+
+const tags = document.getElementById('tags');
+
+const historyList = document.getElementById('historyList');
+const logList = document.getElementById('logList');
+
+const securityStatus = document.getElementById('securityStatus');
+
+let scansToday = 12;
+
+let history = [
+  {
+    title: 'example-login.com',
+    detail: 'High risk URL pattern',
+    score: 82
+  },
+  {
+    title: 'Invoice email',
+    detail: 'Urgency + attachment lure',
+    score: 54
+  },
+  {
+    title: 'Bank alert',
+    detail: 'Verified sender warning',
+    score: 12
+  }
+];
+
+// =========================
+// THEME SYSTEM
+// =========================
+
+function setTheme(theme){
+
+  document.documentElement.setAttribute('data-theme', theme);
+
+  localStorage.setItem('theme', theme);
+
+  themeBtn.textContent =
+    theme === 'light'
+      ? '☀️ Toggle Theme'
+      : '🌙 Toggle Theme';
+
+}
+
+setTheme(localStorage.getItem('theme') || 'dark');
+
+themeBtn.addEventListener('click', ()=>{
+
+  const current =
+    document.documentElement.getAttribute('data-theme');
+
+  setTheme(current === 'dark' ? 'light' : 'dark');
+
+});
+
+// =========================
+// RENDER HISTORY
+// =========================
+
+function renderHistory(){
+
+  historyList.innerHTML = '';
+
+  history.forEach(item=>{
+
+    const div = document.createElement('div');
+
+    div.className = 'history-item';
+
+    div.innerHTML = `
+      <div>
+        <strong>${item.title}</strong>
+        <small>${item.detail}</small>
+      </div>
+
+      <div class="${
+        item.score >= 70
+          ? 'bad'
+          : item.score >= 35
+            ? 'warn'
+            : 'good'
+      }">
+        ${item.score}%
+      </div>
+    `;
+
+    historyList.appendChild(div);
+
+  });
+
+}
+
+// =========================
+// TERMINAL LOGS
+// =========================
+
+function pushLog(message){
+
+  const div = document.createElement('div');
+
+  div.className = 'log-item';
+
+  div.innerHTML = `
+    <div>${message}</div>
+    <small>${new Date().toLocaleTimeString()}</small>
+  `;
+
+  logList.prepend(div);
+
+  while(logList.children.length > 6){
+
+    logList.removeChild(logList.lastElementChild);
+
+  }
+
+}
+
+// =========================
+// THREAT ANALYZER
+// =========================
+
+function analyze(text){
+
+  const value = text.toLowerCase();
+
+  let score = 0;
+
+  const flags = [];
+
+  const rules = [
+
+    {
+      regex:/urgent|verify now|suspended|immediately/,
+      score:18,
+      flag:'Urgency language'
+    },
+
+    {
+      regex:/click here|confirm account|login/,
+      score:16,
+      flag:'Credential lure'
+    },
+
+    {
+      regex:/http:\/\/|bit\.ly|tinyurl|\.xyz|\.ru/,
+      score:20,
+      flag:'Unsafe URL pattern'
+    },
+
+    {
+      regex:/bank|invoice|crypto|payment/,
+      score:12,
+      flag:'Finance themed attack'
+    },
+
+    {
+      regex:/attachment|pdf|docx|download/,
+      score:10,
+      flag:'Attachment lure'
+    }
+
+  ];
+
+  rules.forEach(rule=>{
+
+    if(rule.regex.test(value)){
+
+      score += rule.score;
+
+      flags.push(rule.flag);
+
+    }
+
+  });
+
+  score = Math.min(score,100);
+
+  return {
+    score,
+    flags
+  };
+
+}
+
+// =========================
+// UPDATE DASHBOARD
+// =========================
+
+function updateDashboard(result, original){
+
+  gauge.style.setProperty('--score', result.score);
+
+  gaugeScore.textContent = `${result.score}%`;
+
+  scoreStat.textContent = `${result.score}%`;
+
+  flagsStat.textContent = result.flags.length;
+
+  let verdict = 'Low';
+
+  if(result.score >= 70){
+
+    verdict = 'High';
+
+  } else if(result.score >= 35){
+
+    verdict = 'Medium';
+
+  }
+
+  verdictStat.textContent = verdict;
+
+  statusTitle.textContent = `${verdict} Risk Detected`;
+
+  statusText.textContent =
+    result.flags.length
+      ? result.flags.join(', ')
+      : 'No major threat indicators found.';
+
+  resultPill.textContent = verdict;
+
+  securityStatus.textContent =
+    `${verdict} risk scan completed.`;
+
+  tags.innerHTML = '';
+
+  (
+    result.flags.length
+      ? result.flags
+      : ['No major indicators']
+  ).forEach(flag=>{
+
+    const tag = document.createElement('div');
+
+    tag.className = 'tag';
+
+    tag.textContent = flag;
+
+    tags.appendChild(tag);
+
+  });
+
+  history.unshift({
+    title: original.slice(0,25) || 'New Scan',
+    detail: verdict + ' risk detected',
+    score: result.score
+  });
+
+  history = history.slice(0,6);
+
+  renderHistory();
+
+  scansToday++;
+
+  scansStat.textContent = scansToday;
+
+  pushLog(
+    `Scan completed — ${result.score}% threat detected`
+  );
+
+}
+
+// =========================
+// SCAN BUTTON
+// =========================
+
+scanBtn.addEventListener('click', ()=>{
+
+  const text = inputText.value.trim();
+
+  if(!text){
+
+    alert('Please paste text or a URL first.');
+
+    return;
+
+  }
+
+  const result = analyze(text);
+
+  updateDashboard(result, text);
+
+});
+
+// =========================
+// SIDEBAR NAVIGATION
+// =========================
+
+const navButtons =
+  document.querySelectorAll('.nav button');
+
+navButtons.forEach(button=>{
+
+  button.addEventListener('click', ()=>{
+
+    navButtons.forEach(btn=>{
+
+      btn.classList.remove('active');
+
+    });
+
+    button.classList.add('active');
+
+    const target =
+      document.getElementById(
+        button.dataset.target
+      );
+
+    if(target){
+
+      target.scrollIntoView({
+        behavior:'smooth'
+      });
+
+    }
+
+  });
+
+});
+
+// =========================
+// INITIALIZE
+// =========================
+
+renderHistory();
+
+pushLog('System ready');
+
+pushLog('Monitoring suspicious activity');
+
+pushLog('Awaiting scan');
