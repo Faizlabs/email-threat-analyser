@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1072,4 +1073,99 @@ pushLog('Awaiting scan');
 </script>
 
 </body>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email & URL Threat Analyzer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Theme Button -->
+    <button id="themeToggle" class="theme-toggle" type="button">
+        Toggle Theme
+    </button>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- Title -->
+        <h1>Email & URL Threat Analyzer</h1>
+
+        <!-- Description -->
+        <p class="description">
+            Scan emails and URLs for phishing signs, suspicious language, and unsafe links.
+        </p>
+
+        <!-- Input Section -->
+        <div class="input-section">
+
+            <textarea
+                id="userInput"
+                placeholder="Paste email text or URL here..."
+            ></textarea>
+
+            <button id="scanButton" type="button">
+                Scan Threat
+            </button>
+
+        </div>
+
+        <!-- Result Box -->
+        <div class="result-box" id="resultBox">
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <!-- Heading -->
+            <h2>Analysis Result</h2>
+
+            <!-- Risk Meter -->
+            <div class="meter-wrapper">
+
+                <div class="risk-meter">
+
+                    <div class="meter-circle" id="meterCircle">
+                        <span id="meterText">0%</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Result Text -->
+            <p id="resultText">
+                No scan performed yet.
+            </p>
+
+            <!-- Copy Button -->
+            <button id="copyButton" class="copy-btn">
+                Copy Report
+            </button>
+
+        </div>
+
+        <!-- History Section -->
+        <div class="history-section">
+
+            <h2>Scan History</h2>
+
+            <div id="historyList">
+                No previous scans yet.
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+
+</body>
+>>>>>>> 2d02e07be09bbfb4ad0e76134900398fdf3c758f
 </html>
