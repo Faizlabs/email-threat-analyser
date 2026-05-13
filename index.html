@@ -1,457 +1,11 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Email & URL Threat Analyzer</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <style>
-
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-    }
-
-    :root{
-      --bg:#020617;
-      --bg2:#081224;
-      --panel:#0f172a;
-      --card:#111c33;
-      --text:#e2e8f0;
-      --muted:#94a3b8;
-      --border:rgba(255,255,255,.08);
-      --accent:#3b82f6;
-      --green:#22c55e;
-      --purple:#7c3aed;
-      --danger:#ef4444;
-      --warning:#f59e0b;
-    }
-
-    [data-theme="light"]{
-      --bg:#eef2ff;
-      --bg2:#f8fafc;
-      --panel:#ffffff;
-      --card:#ffffff;
-      --text:#0f172a;
-      --muted:#475569;
-      --border:rgba(15,23,42,.08);
-    }
-
-    body{
-      font-family:Arial,sans-serif;
-      min-height:100vh;
-      overflow-x:hidden;
-      background:
-      radial-gradient(circle at top left, rgba(59,130,246,.15), transparent 25%),
-      radial-gradient(circle at bottom right, rgba(124,58,237,.15), transparent 25%),
-      linear-gradient(135deg,var(--bg),var(--bg2));
-      color:var(--text);
-    }
-
-    .app{
-      display:grid;
-      grid-template-columns:270px 1fr;
-      min-height:100vh;
-    }
-
-    .sidebar{
-      padding:20px;
-      border-right:1px solid var(--border);
-      background:rgba(2,6,23,.7);
-      backdrop-filter:blur(18px);
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      padding:18px;
-      border-radius:24px;
-      background:var(--panel);
-      border:1px solid var(--border);
-    }
-
-    .badge{
-      width:52px;
-      height:52px;
-      border-radius:16px;
-      display:grid;
-      place-items:center;
-      font-weight:800;
-      color:white;
-      background:linear-gradient(135deg,var(--accent),var(--purple));
-    }
-
-    .brand p{
-      color:var(--muted);
-      margin-top:4px;
-      font-size:.9rem;
-    }
-
-    .nav{
-      display:grid;
-      gap:12px;
-    }
-
-    .nav button,
-    .theme-btn,
-    .action-btn{
-      border:none;
-      border-radius:18px;
-      padding:16px;
-      cursor:pointer;
-      font-size:1rem;
-      color:var(--text);
-      background:var(--panel);
-      border:1px solid var(--border);
-      transition:.25s;
-    }
-
-    .nav button{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      text-align:left;
-    }
-
-    .nav button:hover,
-    .nav button.active{
-      transform:translateY(-2px);
-      background:linear-gradient(135deg, rgba(59,130,246,.18), rgba(34,197,94,.14));
-      border-color:rgba(59,130,246,.4);
-    }
-
-    .sidebar-bottom{
-      margin-top:auto;
-      display:grid;
-      gap:14px;
-    }
-
-    .status-box{
-      padding:18px;
-      border-radius:24px;
-      background:var(--card);
-      border:1px solid var(--border);
-      line-height:1.7;
-    }
-
-    .status-box h3{
-      margin-bottom:10px;
-    }
-
-    .main{
-      padding:20px;
-    }
-
-    .hero{
-      display:grid;
-      grid-template-columns:1.2fr .8fr;
-      gap:20px;
-    }
-
-    .panel{
-      background:rgba(15,23,42,.7);
-      backdrop-filter:blur(20px);
-      border-radius:30px;
-      padding:24px;
-      border:1px solid var(--border);
-      box-shadow:0 20px 50px rgba(0,0,0,.35);
-    }
-
-    [data-theme="light"] .panel{
-      background:rgba(255,255,255,.85);
-    }
-
-    .eyebrow{
-      color:var(--accent);
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      font-size:.82rem;
-      font-weight:800;
-      margin-bottom:12px;
-    }
-
-    .headline h1{
-      font-size:3rem;
-      margin-bottom:18px;
-      line-height:1.1;
-    }
-
-    .headline p{
-      color:var(--muted);
-      line-height:1.8;
-      margin-bottom:24px;
-    }
-
-    textarea{
-      width:100%;
-      min-height:180px;
-      border:none;
-      outline:none;
-      resize:vertical;
-      border-radius:24px;
-      padding:18px;
-      font-size:1rem;
-      background:var(--panel);
-      border:1px solid var(--border);
-      color:var(--text);
-    }
-
-    .scan-btn{
-      width:100%;
-      margin-top:14px;
-      border:none;
-      border-radius:20px;
-      padding:18px;
-      font-size:1rem;
-      font-weight:800;
-      cursor:pointer;
-      color:white;
-      background:linear-gradient(90deg,#00d084,#0ea5e9 50%,#7c3aed);
-    }
-
-    .stats{
-      margin-top:22px;
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:14px;
-    }
-
-    .stat-card{
-      padding:18px;
-      border-radius:22px;
-      background:var(--card);
-      border:1px solid var(--border);
-    }
-
-    .stat-card small{
-      color:var(--muted);
-    }
-
-    .stat-card h2{
-      font-size:2rem;
-      margin:10px 0;
-    }
-
-    .result-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:20px;
-    }
-
-    .pill{
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      color:var(--muted);
-      font-size:.82rem;
-    }
-
-    .gauge{
-      width:240px;
-      aspect-ratio:1;
-      margin:auto;
-      border-radius:50%;
-      display:grid;
-      place-items:center;
-      background:
-      radial-gradient(circle at center,var(--panel) 58%,transparent 60%),
-      conic-gradient(var(--accent) calc(var(--score) * 1%), rgba(255,255,255,.08) 0);
-    }
-
-    .gauge-inner{
-      width:180px;
-      height:180px;
-      border-radius:50%;
-      background:var(--bg);
-      border:1px solid var(--border);
-      display:grid;
-      place-items:center;
-      text-align:center;
-    }
-
-    .gauge-score{
-      font-size:3rem;
-      font-weight:900;
-    }
-
-    .gauge-label{
-      color:var(--muted);
-    }
-
-    .status{
-      margin-top:22px;
-      padding:18px;
-      border-radius:22px;
-      background:var(--card);
-      border:1px solid var(--border);
-      line-height:1.7;
-    }
-
-    .status strong{
-      display:block;
-      margin-bottom:10px;
-    }
-
-    .tags{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:18px;
-    }
-
-    .tag{
-      padding:8px 12px;
-      border-radius:999px;
-      background:rgba(59,130,246,.15);
-      border:1px solid rgba(59,130,246,.25);
-      font-size:.85rem;
-    }
-
-    .grid-2{
-      display:grid;
-      grid-template-columns:1.1fr .9fr;
-      gap:20px;
-      margin-top:20px;
-    }
-
-    .card-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:20px;
-    }
-
-    .bars{
-      display:grid;
-      gap:16px;
-    }
-
-    .bar-row{
-      display:grid;
-      grid-template-columns:110px 1fr 50px;
-      gap:10px;
-      align-items:center;
-    }
-
-    .bar-track{
-      height:12px;
-      background:rgba(255,255,255,.08);
-      border-radius:999px;
-      overflow:hidden;
-    }
-
-    .bar-fill{
-      height:100%;
-      border-radius:inherit;
-      background:linear-gradient(90deg,var(--accent),var(--green));
-    }
-
-    .history-list,
-    .logs,
-    .settings-grid{
-      display:grid;
-      gap:12px;
-    }
-
-    .history-item,
-    .log-item,
-    .setting-item{
-      padding:16px;
-      border-radius:18px;
-      border:1px solid var(--border);
-      background:var(--card);
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:center;
-    }
-
-    .history-item small,
-    .log-item small{
-      display:block;
-      margin-top:4px;
-      color:var(--muted);
-    }
-
-    .setting-item p{
-      margin-top:6px;
-      color:var(--muted);
-    }
-
-    .switch{
-      position:relative;
-      width:58px;
-      height:30px;
-    }
-
-    .switch input{
-      opacity:0;
-      width:0;
-      height:0;
-    }
-
-    .slider{
-      position:absolute;
-      inset:0;
-      cursor:pointer;
-      background:#334155;
-      border-radius:999px;
-      transition:.3s;
-    }
-
-    .slider::before{
-      content:'';
-      position:absolute;
-      width:22px;
-      height:22px;
-      left:4px;
-      bottom:4px;
-      background:white;
-      border-radius:50%;
-      transition:.3s;
-    }
-
-    .switch input:checked + .slider{
-      background:linear-gradient(135deg,var(--accent),var(--green));
-    }
-
-    .switch input:checked + .slider::before{
-      transform:translateX(28px);
-    }
-
-    .good{ color:var(--green); }
-    .warn{ color:var(--warning); }
-    .bad{ color:var(--danger); }
-
-    @media(max-width:1100px){
-
-      .hero,
-      .grid-2,
-      .stats{
-        grid-template-columns:1fr;
-      }
-
-    }
-
-    @media(max-width:860px){
-
-      .app{
-        grid-template-columns:1fr;
-      }
-
-    }
-
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Threat Analyzer Dashboard</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -461,33 +15,50 @@
   <aside class="sidebar">
 
     <div class="brand">
+
       <div class="badge">TA</div>
 
       <div>
         <h2>Threat Analyzer</h2>
-        <p>Email & URL Security Monitor</p>
+        <p>Cybersecurity Dashboard</p>
       </div>
+
     </div>
 
     <nav class="nav">
-      <button class="active" data-target="dashboardSection">◉ Dashboard</button>
-      <button data-target="scanHistorySection">▣ Scan History</button>
-      <button data-target="threatActivitySection">◌ Threat Intelligence</button>
-      <button data-target="settingsSection">⟟ Settings</button>
+
+      <button class="active" data-target="dashboardSection">
+        Dashboard
+      </button>
+
+      <button data-target="scanHistorySection">
+        Scan History
+      </button>
+
+      <button data-target="threatActivitySection">
+        Threat Intelligence
+      </button>
+
+      <button data-target="settingsSection">
+        Settings
+      </button>
+
     </nav>
 
     <div class="sidebar-bottom">
 
       <button class="theme-btn" id="themeBtn">
-        🌙 Toggle Theme
+        Toggle Theme
       </button>
 
       <div class="status-box">
+
         <h3>Live Security Status</h3>
 
         <p id="securityStatus">
-          Monitoring phishing attempts and suspicious URLs.
+          Monitoring suspicious activity...
         </p>
+
       </div>
 
     </div>
@@ -502,20 +73,23 @@
 
         <div class="headline">
 
-          <div class="eyebrow">Dashboard</div>
+          <div class="eyebrow">
+            Dashboard
+          </div>
 
           <h1>Email & URL Threat Analyzer</h1>
 
           <p>
             Scan emails and URLs for phishing signs,
-            suspicious language, unsafe links,
-            and social engineering patterns.
+            unsafe links, and suspicious language.
           </p>
 
         </div>
 
-        <textarea id="inputText"
-        placeholder="Paste email text or URL here..."></textarea>
+        <textarea
+          id="inputText"
+          placeholder="Paste email text or URL here..."
+        ></textarea>
 
         <button class="scan-btn" id="scanBtn">
           Scan Threat
@@ -526,25 +100,21 @@
           <div class="stat-card">
             <small>Threat Score</small>
             <h2 id="scoreStat">0%</h2>
-            <small>Current scan risk</small>
           </div>
 
           <div class="stat-card">
             <small>Flags Found</small>
             <h2 id="flagsStat">0</h2>
-            <small>Suspicious patterns</small>
           </div>
 
           <div class="stat-card">
             <small>Scans Today</small>
             <h2 id="scansStat">12</h2>
-            <small>Running total</small>
           </div>
 
           <div class="stat-card">
-            <small>Safe Verdict</small>
+            <small>Verdict</small>
             <h2 id="verdictStat">—</h2>
-            <small>Latest result</small>
           </div>
 
         </div>
@@ -558,12 +128,12 @@
           <h2>Analysis Result</h2>
 
           <div class="pill" id="resultPill">
-            Awaiting scan
+            Awaiting Scan
           </div>
 
         </div>
 
-        <div class="gauge" id="gauge" style="--score:0;">
+        <div class="gauge" id="gauge">
 
           <div class="gauge-inner">
 
@@ -590,7 +160,7 @@
           </strong>
 
           <span id="statusText">
-            Paste text or a URL and press Scan Threat.
+            Paste text and click scan.
           </span>
 
         </div>
@@ -606,34 +176,51 @@
       <div class="panel" id="threatActivitySection">
 
         <div class="card-head">
+
           <h2>Threat Activity</h2>
-          <div class="pill">Last 7 scans</div>
+
+          <div class="pill">
+            Last 7 scans
+          </div>
+
         </div>
 
         <div class="bars">
 
           <div class="bar-row">
+
             <span>Phishing</span>
+
             <div class="bar-track">
               <div class="bar-fill" style="width:22%"></div>
             </div>
+
             <span>22%</span>
+
           </div>
 
           <div class="bar-row">
+
             <span>Suspicious</span>
+
             <div class="bar-track">
               <div class="bar-fill" style="width:48%"></div>
             </div>
+
             <span>48%</span>
+
           </div>
 
           <div class="bar-row">
+
             <span>Unsafe URL</span>
+
             <div class="bar-track">
               <div class="bar-fill" style="width:33%"></div>
             </div>
+
             <span>33%</span>
+
           </div>
 
         </div>
@@ -643,8 +230,13 @@
       <div class="panel" id="scanHistorySection">
 
         <div class="card-head">
+
           <h2>Scan History</h2>
-          <div class="pill">Recent checks</div>
+
+          <div class="pill">
+            Recent scans
+          </div>
+
         </div>
 
         <div class="history-list" id="historyList"></div>
@@ -653,24 +245,32 @@
 
     </section>
 
-    <section class="panel" id="terminalLogsSection"
-    style="margin-top:20px;">
+    <section class="panel terminal-section">
 
       <div class="card-head">
+
         <h2>Terminal Logs</h2>
-        <div class="pill">Live output</div>
+
+        <div class="pill">
+          Live Output
+        </div>
+
       </div>
 
       <div class="logs" id="logList"></div>
 
     </section>
 
-    <section class="panel" id="settingsSection"
-    style="margin-top:20px;">
+    <section class="panel settings-section" id="settingsSection">
 
       <div class="card-head">
-        <h2>Security Settings</h2>
-        <div class="pill">System Controls</div>
+
+        <h2>Settings</h2>
+
+        <div class="pill">
+          Controls
+        </div>
+
       </div>
 
       <div class="settings-grid">
@@ -678,54 +278,17 @@
         <div class="setting-item">
 
           <div>
-            <strong>Live Monitoring</strong>
-            <p>Continuously monitor suspicious activity.</p>
-          </div>
 
-          <label class="switch">
-            <input type="checkbox" checked>
-            <span class="slider"></span>
-          </label>
-
-        </div>
-
-        <div class="setting-item">
-
-          <div>
-            <strong>Auto Scan URLs</strong>
-            <p>Automatically analyze detected URLs.</p>
-          </div>
-
-          <label class="switch">
-            <input type="checkbox" checked>
-            <span class="slider"></span>
-          </label>
-
-        </div>
-
-        <div class="setting-item">
-
-          <div>
-            <strong>Sound Alerts</strong>
-            <p>Play alert sounds on high-risk scans.</p>
-          </div>
-
-          <label class="switch">
-            <input type="checkbox">
-            <span class="slider"></span>
-          </label>
-
-        </div>
-
-        <div class="setting-item">
-
-          <div>
             <strong>Dark Mode</strong>
-            <p>Switch between dark and light themes.</p>
+
+            <p>
+              Toggle light/dark theme.
+            </p>
+
           </div>
 
           <button class="action-btn" id="settingsThemeBtn">
-            Toggle Theme
+            Toggle
           </button>
 
         </div>
@@ -733,8 +296,13 @@
         <div class="setting-item">
 
           <div>
-            <strong>Clear Scan History</strong>
-            <p>Remove all previous scan records.</p>
+
+            <strong>Clear History</strong>
+
+            <p>
+              Remove scan records.
+            </p>
+
           </div>
 
           <button class="action-btn" id="clearHistoryBtn">
@@ -751,421 +319,7 @@
 
 </div>
 
-<script>
-
-const themeBtn = document.getElementById('themeBtn');
-const settingsThemeBtn = document.getElementById('settingsThemeBtn');
-const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-
-const scanBtn = document.getElementById('scanBtn');
-const inputText = document.getElementById('inputText');
-
-const gauge = document.getElementById('gauge');
-const gaugeScore = document.getElementById('gaugeScore');
-
-const scoreStat = document.getElementById('scoreStat');
-const flagsStat = document.getElementById('flagsStat');
-const verdictStat = document.getElementById('verdictStat');
-const scansStat = document.getElementById('scansStat');
-
-const statusTitle = document.getElementById('statusTitle');
-const statusText = document.getElementById('statusText');
-
-const resultPill = document.getElementById('resultPill');
-
-const tags = document.getElementById('tags');
-
-const historyList = document.getElementById('historyList');
-const logList = document.getElementById('logList');
-
-const securityStatus = document.getElementById('securityStatus');
-
-let scansToday = 12;
-
-let history = [];
-
-function setTheme(theme){
-
-  document.documentElement.setAttribute(
-    'data-theme',
-    theme
-  );
-
-  localStorage.setItem('theme', theme);
-
-}
-
-setTheme(
-  localStorage.getItem('theme') || 'dark'
-);
-
-function toggleTheme(){
-
-  const current =
-  document.documentElement.getAttribute(
-    'data-theme'
-  );
-
-  setTheme(
-    current === 'dark'
-      ? 'light'
-      : 'dark'
-  );
-
-}
-
-themeBtn.addEventListener('click', toggleTheme);
-
-settingsThemeBtn.addEventListener(
-  'click',
-  toggleTheme
-);
-
-function renderHistory(){
-
-  historyList.innerHTML = '';
-
-  history.forEach(item=>{
-
-    const div = document.createElement('div');
-
-    div.className = 'history-item';
-
-    div.innerHTML = `
-      <div>
-        <strong>${item.title}</strong>
-        <small>${item.detail}</small>
-      </div>
-
-      <div class="${
-        item.score >= 70
-          ? 'bad'
-          : item.score >= 35
-          ? 'warn'
-          : 'good'
-      }">
-        ${item.score}%
-      </div>
-    `;
-
-    historyList.appendChild(div);
-
-  });
-
-}
-
-function pushLog(message){
-
-  const div = document.createElement('div');
-
-  div.className = 'log-item';
-
-  div.innerHTML = `
-    <div>${message}</div>
-    <small>${new Date().toLocaleTimeString()}</small>
-  `;
-
-  logList.prepend(div);
-
-}
-
-function analyze(text){
-
-  const value = text.toLowerCase();
-
-  let score = 0;
-
-  const flags = [];
-
-  const rules = [
-
-    {
-      regex:/urgent|verify now|suspended|immediately/,
-      score:18,
-      flag:'Urgency language'
-    },
-
-    {
-      regex:/click here|confirm account|login/,
-      score:16,
-      flag:'Credential lure'
-    },
-
-    {
-      regex:/http:\/\/|bit\.ly|tinyurl|\.xyz|\.ru/,
-      score:20,
-      flag:'Unsafe URL pattern'
-    },
-
-    {
-      regex:/bank|invoice|crypto|payment/,
-      score:12,
-      flag:'Finance themed attack'
-    }
-
-  ];
-
-  rules.forEach(rule=>{
-
-    if(rule.regex.test(value)){
-
-      score += rule.score;
-
-      flags.push(rule.flag);
-
-    }
-
-  });
-
-  score = Math.min(score,100);
-
-  return {
-    score,
-    flags
-  };
-
-}
-
-function updateDashboard(result, original){
-
-  gauge.style.setProperty(
-    '--score',
-    result.score
-  );
-
-  gaugeScore.textContent =
-  `${result.score}%`;
-
-  scoreStat.textContent =
-  `${result.score}%`;
-
-  flagsStat.textContent =
-  result.flags.length;
-
-  let verdict = 'Low';
-
-  if(result.score >= 70){
-
-    verdict = 'High';
-
-  } else if(result.score >= 35){
-
-    verdict = 'Medium';
-
-  }
-
-  verdictStat.textContent = verdict;
-
-  statusTitle.textContent =
-  `${verdict} Risk Detected`;
-
-  statusText.textContent =
-  result.flags.join(', ') ||
-  'No major threat indicators found.';
-
-  resultPill.textContent = verdict;
-
-  securityStatus.textContent =
-  `${verdict} risk scan completed`;
-
-  tags.innerHTML = '';
-
-  (
-    result.flags.length
-    ? result.flags
-    : ['No indicators']
-  ).forEach(flag=>{
-
-    const tag = document.createElement('div');
-
-    tag.className = 'tag';
-
-    tag.textContent = flag;
-
-    tags.appendChild(tag);
-
-  });
-
-  history.unshift({
-    title: original.slice(0,25),
-    detail: verdict + ' risk detected',
-    score: result.score
-  });
-
-  history = history.slice(0,6);
-
-  renderHistory();
-
-  scansToday++;
-
-  scansStat.textContent = scansToday;
-
-  pushLog(
-    `Scan completed — ${result.score}% threat detected`
-  );
-
-}
-
-scanBtn.addEventListener('click', ()=>{
-
-  const text = inputText.value.trim();
-
-  if(!text){
-
-    alert('Please enter text or URL');
-
-    return;
-
-  }
-
-  const result = analyze(text);
-
-  updateDashboard(result, text);
-
-});
-
-clearHistoryBtn.addEventListener('click', ()=>{
-
-  history = [];
-
-  renderHistory();
-
-  pushLog('History cleared');
-
-});
-
-const navButtons =
-document.querySelectorAll('.nav button');
-
-navButtons.forEach(button=>{
-
-  button.addEventListener('click', ()=>{
-
-    navButtons.forEach(btn=>{
-
-      btn.classList.remove('active');
-
-    });
-
-    button.classList.add('active');
-
-    const target =
-    document.getElementById(
-      button.dataset.target
-    );
-
-    if(target){
-
-      target.scrollIntoView({
-        behavior:'smooth'
-      });
-
-    }
-
-  });
-
-});
-
-pushLog('System ready');
-pushLog('Monitoring suspicious activity');
-pushLog('Awaiting scan');
-
-</script>
+<script src="script.js"></script>
 
 </body>
-=======
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email & URL Threat Analyzer</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-    <!-- Theme Button -->
-    <button id="themeToggle" class="theme-toggle" type="button">
-        Toggle Theme
-    </button>
-
-    <!-- Main Container -->
-    <div class="container">
-
-        <!-- Title -->
-        <h1>Email & URL Threat Analyzer</h1>
-
-        <!-- Description -->
-        <p class="description">
-            Scan emails and URLs for phishing signs, suspicious language, and unsafe links.
-        </p>
-
-        <!-- Input Section -->
-        <div class="input-section">
-
-            <textarea
-                id="userInput"
-                placeholder="Paste email text or URL here..."
-            ></textarea>
-
-            <button id="scanButton" type="button">
-                Scan Threat
-            </button>
-
-        </div>
-
-        <!-- Result Box -->
-        <div class="result-box" id="resultBox">
-
-            <!-- Progress Bar -->
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-
-            <!-- Heading -->
-            <h2>Analysis Result</h2>
-
-            <!-- Risk Meter -->
-            <div class="meter-wrapper">
-
-                <div class="risk-meter">
-
-                    <div class="meter-circle" id="meterCircle">
-                        <span id="meterText">0%</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- Result Text -->
-            <p id="resultText">
-                No scan performed yet.
-            </p>
-
-            <!-- Copy Button -->
-            <button id="copyButton" class="copy-btn">
-                Copy Report
-            </button>
-
-        </div>
-
-        <!-- History Section -->
-        <div class="history-section">
-
-            <h2>Scan History</h2>
-
-            <div id="historyList">
-                No previous scans yet.
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- JavaScript -->
-    <script src="script.js"></script>
-
-</body>
->>>>>>> 2d02e07be09bbfb4ad0e76134900398fdf3c758f
 </html>
