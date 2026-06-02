@@ -109,6 +109,8 @@
     totalScans: 0,
   };
 
+  let isScanning = false;
+
   // Load persisted state
   function loadState() {
     try {
@@ -493,6 +495,7 @@
     const categoryCounts = {};
 
     RULES.forEach((rule) => {
+      // Test against lowercase but capture from original text for display
       const match = rule.regex.exec(value);
       if (match) {
         const adjustedScore = Math.round(rule.baseScore * multiplier);
@@ -500,12 +503,15 @@
         categoryCounts[rule.category] =
           (categoryCounts[rule.category] || 0) + 1;
 
+        // Extract matched text from original (preserving case)
+        const originalMatch = text.substring(match.index, match.index + match[0].length);
+
         matches.push({
           flag: rule.flag,
           category: rule.category,
           severity: rule.severity,
           score: adjustedScore,
-          matched: match[0],
+          matched: originalMatch,
           advice: rule.advice,
         });
       }
@@ -801,12 +807,12 @@
     const total = state.totalScans;
 
     const data = {
-      phishing: Math.round((cats.urgency / total) * 100),
-      credential: Math.round((cats.credential / total) * 100),
-      unsafe: Math.round((cats.unsafeUrl / total) * 100),
-      finance: Math.round((cats.finance / total) * 100),
-      impersonation: Math.round((cats.impersonation / total) * 100),
-      social: Math.round((cats.socialEng / total) * 100),
+      phishing: Math.min(Math.round((cats.urgency / total) * 100), 100),
+      credential: Math.min(Math.round((cats.credential / total) * 100), 100),
+      unsafe: Math.min(Math.round((cats.unsafeUrl / total) * 100), 100),
+      finance: Math.min(Math.round((cats.finance / total) * 100), 100),
+      impersonation: Math.min(Math.round((cats.impersonation / total) * 100), 100),
+      social: Math.min(Math.round((cats.socialEng / total) * 100), 100),
     };
 
     DOM.barPhishing.style.width = data.phishing + "%";
@@ -904,12 +910,16 @@
   ========================= */
 
   function performScan() {
+    if (isScanning) return; // Guard against double-scan
+
     const text = DOM.inputText.value.trim();
     if (!text) {
       pushLog("Scan aborted — no input provided", "warning");
       DOM.inputText.focus();
       return;
     }
+
+    isScanning = true;
 
     // Show scanning state
     DOM.scanBtn.classList.add("scanning");
@@ -944,10 +954,10 @@
       state.totalScans++;
       state.lastResult = result;
 
-      // Track category hits
+      // Track category hits (1 per scan if category was present)
       for (const cat in result.categoryCounts) {
         if (state.categoryHits[cat] !== undefined) {
-          state.categoryHits[cat] += result.categoryCounts[cat];
+          state.categoryHits[cat] += 1;
         }
       }
 
@@ -991,6 +1001,7 @@
           verdictText + " — scan completed";
 
         pushLog("Dashboard updated successfully", "success");
+        isScanning = false;
       }, 500);
     }, 1400);
   }
