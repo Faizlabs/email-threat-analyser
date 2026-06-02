@@ -1,324 +1,358 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Threat Analyzer Dashboard</title>
-
+  <title>Threat Analyzer — Email &amp; URL Cybersecurity Scanner</title>
+  <meta name="description" content="Advanced email and URL threat analyzer. Scan for phishing, credential lures, unsafe links, and suspicious language patterns with real-time threat scoring.">
+  <meta property="og:title" content="Threat Analyzer — Cybersecurity Scanner">
+  <meta property="og:description" content="Scan emails and URLs for phishing, unsafe links, and suspicious patterns.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<!-- Scanning Overlay -->
+<div class="scan-overlay" id="scanOverlay" role="dialog" aria-label="Scanning in progress">
+  <div class="scan-modal">
+    <div class="scan-spinner"></div>
+    <h3 id="scanOverlayTitle">Analyzing Threat Patterns...</h3>
+    <p id="scanOverlayText">Running 25+ detection rules</p>
+  </div>
+</div>
+
+<!-- Mobile Hamburger -->
+<button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu">
+  <i data-lucide="menu"></i>
+</button>
+
+<!-- Sidebar Overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="app">
 
-  <aside class="sidebar">
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
 
     <div class="brand">
-
-      <div class="badge">TA</div>
-
-      <div>
-        <h2>Threat Analyzer</h2>
-        <p>Cybersecurity Dashboard</p>
+      <div class="brand-icon" aria-hidden="true">
+        <img src="logo.png" alt="Threat Analyzer Logo" class="brand-logo">
       </div>
-
+      <div class="brand-info">
+        <h2>Threat Analyzer</h2>
+        <p>Cybersecurity Suite</p>
+      </div>
     </div>
 
-    <nav class="nav">
-
-      <button class="active" data-target="dashboardSection">
+    <nav class="nav" aria-label="Section navigation">
+      <button class="nav-btn active" data-target="dashboardSection" id="navDashboard" aria-current="true">
+        <i data-lucide="layout-dashboard"></i>
         Dashboard
       </button>
-
-      <button data-target="scanHistorySection">
-        Scan History
+      <button class="nav-btn" data-target="analysisSection" id="navAnalysis">
+        <i data-lucide="scan-search"></i>
+        Analysis Details
       </button>
-
-      <button data-target="threatActivitySection">
+      <button class="nav-btn" data-target="threatSection" id="navThreat">
+        <i data-lucide="activity"></i>
         Threat Intelligence
       </button>
-
-      <button data-target="settingsSection">
+      <button class="nav-btn" data-target="historySection" id="navHistory">
+        <i data-lucide="history"></i>
+        Scan History
+      </button>
+      <button class="nav-btn" data-target="terminalSection" id="navTerminal">
+        <i data-lucide="terminal"></i>
+        Terminal Logs
+      </button>
+      <button class="nav-btn" data-target="settingsSection" id="navSettings">
+        <i data-lucide="settings"></i>
         Settings
       </button>
-
     </nav>
 
     <div class="sidebar-bottom">
-
-      <button class="theme-btn" id="themeBtn">
-        Toggle Theme
-      </button>
-
-      <div class="status-box">
-
-        <h3>Live Security Status</h3>
-
-        <p id="securityStatus">
-          Monitoring suspicious activity...
-        </p>
-
+      <div class="status-indicator">
+        <h4>System Status</h4>
+        <div class="status-dot-row">
+          <div class="status-dot" aria-hidden="true"></div>
+          <span id="sidebarStatus">Monitoring active</span>
+        </div>
       </div>
-
     </div>
 
   </aside>
 
-  <main class="main">
+  <!-- ===================== MAIN ===================== -->
+  <main class="main" id="mainContent" role="main">
 
-    <section class="hero" id="dashboardSection">
+    <!-- ===== DASHBOARD SECTION ===== -->
+    <section id="dashboardSection" aria-label="Dashboard">
 
-      <div class="panel">
-
-        <div class="headline">
-
-          <div class="eyebrow">
-            Dashboard
-          </div>
-
-          <h1>Email & URL Threat Analyzer</h1>
-
-          <p>
-            Scan emails and URLs for phishing signs,
-            unsafe links, and suspicious language.
-          </p>
-
+      <div class="section-header">
+        <div class="section-eyebrow">
+          <i data-lucide="shield-alert"></i>
+          Dashboard
         </div>
-
-        <textarea
-          id="inputText"
-          placeholder="Paste email text or URL here..."
-        ></textarea>
-
-        <button class="scan-btn" id="scanBtn">
-          Scan Threat
-        </button>
-
-        <div class="stats">
-
-          <div class="stat-card">
-            <small>Threat Score</small>
-            <h2 id="scoreStat">0%</h2>
-          </div>
-
-          <div class="stat-card">
-            <small>Flags Found</small>
-            <h2 id="flagsStat">0</h2>
-          </div>
-
-          <div class="stat-card">
-            <small>Scans Today</small>
-            <h2 id="scansStat">12</h2>
-          </div>
-
-          <div class="stat-card">
-            <small>Verdict</small>
-            <h2 id="verdictStat">—</h2>
-          </div>
-
-        </div>
-
+        <h1>Email &amp; URL Threat Analyzer</h1>
+        <p>Scan emails and URLs for phishing signs, unsafe links, impersonation, and suspicious language patterns.</p>
       </div>
 
-      <div class="panel">
+      <div class="hero-grid">
 
-        <div class="result-head">
-
-          <h2>Analysis Result</h2>
-
-          <div class="pill" id="resultPill">
-            Awaiting Scan
+        <!-- LEFT: Input Panel -->
+        <div class="panel" id="inputPanel">
+          <div class="panel-header">
+            <h2><i data-lucide="scan"></i> Threat Scanner</h2>
+            <div class="pill info">Ready</div>
           </div>
 
-        </div>
-
-        <div class="gauge" id="gauge">
-
-          <div class="gauge-inner">
-
-            <div>
-
-              <div class="gauge-score" id="gaugeScore">
-                0%
-              </div>
-
-              <div class="gauge-label">
-                Threat Level
-              </div>
-
-            </div>
-
+          <div class="input-area">
+            <textarea
+              id="inputText"
+              placeholder="Paste email text, headers, or URL here for analysis..."
+              aria-label="Input text for threat analysis"
+              rows="7"
+            ></textarea>
           </div>
 
-        </div>
-
-        <div class="status">
-
-          <strong id="statusTitle">
-            No scan yet
-          </strong>
-
-          <span id="statusText">
-            Paste text and click scan.
-          </span>
-
-        </div>
-
-        <div class="tags" id="tags"></div>
-
-      </div>
-
-    </section>
-
-    <section class="grid-2">
-
-      <div class="panel" id="threatActivitySection">
-
-        <div class="card-head">
-
-          <h2>Threat Activity</h2>
-
-          <div class="pill">
-            Last 7 scans
-          </div>
-
-        </div>
-
-        <div class="bars">
-
-          <div class="bar-row">
-
-            <span>Phishing</span>
-
-            <div class="bar-track">
-              <div class="bar-fill" style="width:22%"></div>
-            </div>
-
-            <span>22%</span>
-
-          </div>
-
-          <div class="bar-row">
-
-            <span>Suspicious</span>
-
-            <div class="bar-track">
-              <div class="bar-fill" style="width:48%"></div>
-            </div>
-
-            <span>48%</span>
-
-          </div>
-
-          <div class="bar-row">
-
-            <span>Unsafe URL</span>
-
-            <div class="bar-track">
-              <div class="bar-fill" style="width:33%"></div>
-            </div>
-
-            <span>33%</span>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="panel" id="scanHistorySection">
-
-        <div class="card-head">
-
-          <h2>Scan History</h2>
-
-          <div class="pill">
-            Recent scans
-          </div>
-
-        </div>
-
-        <div class="history-list" id="historyList"></div>
-
-      </div>
-
-    </section>
-
-    <section class="panel terminal-section">
-
-      <div class="card-head">
-
-        <h2>Terminal Logs</h2>
-
-        <div class="pill">
-          Live Output
-        </div>
-
-      </div>
-
-      <div class="logs" id="logList"></div>
-
-    </section>
-
-    <section class="panel settings-section" id="settingsSection">
-
-      <div class="card-head">
-
-        <h2>Settings</h2>
-
-        <div class="pill">
-          Controls
-        </div>
-
-      </div>
-
-      <div class="settings-grid">
-
-        <div class="setting-item">
-
-          <div>
-
-            <strong>Dark Mode</strong>
-
-            <p>
-              Toggle light/dark theme.
-            </p>
-
-          </div>
-
-          <button class="action-btn" id="settingsThemeBtn">
-            Toggle
+          <button class="scan-btn" id="scanBtn" aria-label="Start threat scan">
+            <i data-lucide="search"></i>
+            <span id="scanBtnText">Analyze Threat</span>
           </button>
 
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-label">Threat Score</div>
+              <div class="stat-value" id="scoreStat">0%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Flags Found</div>
+              <div class="stat-value" id="flagsStat">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Scans Today</div>
+              <div class="stat-value" id="scansStat">0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Verdict</div>
+              <div class="stat-value" id="verdictStat">—</div>
+            </div>
+          </div>
         </div>
 
-        <div class="setting-item">
-
-          <div>
-
-            <strong>Clear History</strong>
-
-            <p>
-              Remove scan records.
-            </p>
-
+        <!-- RIGHT: Gauge Panel -->
+        <div class="panel" id="gaugePanel">
+          <div class="panel-header">
+            <h2><i data-lucide="gauge"></i> Analysis Result</h2>
+            <div class="pill" id="resultPill">Awaiting Scan</div>
           </div>
 
-          <button class="action-btn" id="clearHistoryBtn">
-            Clear
-          </button>
+          <div class="gauge-container">
+            <div class="gauge" id="gauge">
+              <div class="gauge-glow" id="gaugeGlow"></div>
+              <div class="gauge-content">
+                <div class="gauge-score" id="gaugeScore">0%</div>
+                <div class="gauge-label">Threat Level</div>
+              </div>
+            </div>
+          </div>
 
+          <div class="verdict-box" id="verdictBox">
+            <div class="verdict-title" id="verdictTitle">
+              <i data-lucide="info"></i>
+              No scan yet
+            </div>
+            <div class="verdict-text" id="verdictText">Paste text or a URL and click "Analyze Threat" to begin.</div>
+          </div>
+
+          <div class="tags" id="tags"></div>
         </div>
 
       </div>
+    </section>
 
+    <!-- ===== ANALYSIS DETAILS SECTION ===== -->
+    <section id="analysisSection" class="content-grid" aria-label="Analysis Details">
+
+      <!-- Detailed Breakdown -->
+      <div class="panel" id="breakdownPanel">
+        <div class="panel-header">
+          <h2><i data-lucide="list-checks"></i> Detailed Breakdown</h2>
+          <div class="pill" id="breakdownPill">0 rules matched</div>
+        </div>
+        <div class="breakdown-list" id="breakdownList">
+          <div class="no-threats-msg" id="noThreatsMsg">
+            <i data-lucide="shield-check"></i>
+            <p>Run a scan to see detailed threat breakdown</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- URL Extraction -->
+      <div class="panel" id="urlPanel">
+        <div class="panel-header">
+          <h2><i data-lucide="link-2"></i> URL Analysis</h2>
+          <div class="pill" id="urlPill">0 URLs found</div>
+        </div>
+        <div class="url-list" id="urlList">
+          <div class="empty-state">
+            <i data-lucide="globe"></i>
+            <p>URLs found in the input will be analyzed individually</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===== THREAT INTELLIGENCE SECTION ===== -->
+    <section id="threatSection" class="content-grid" aria-label="Threat Intelligence">
+
+      <!-- Threat Activity -->
+      <div class="panel" id="activityPanel">
+        <div class="panel-header">
+          <h2><i data-lucide="bar-chart-3"></i> Threat Activity</h2>
+          <div class="pill">Aggregated Data</div>
+        </div>
+        <div class="bar-list" id="barList">
+          <div class="bar-row">
+            <span class="bar-label">Phishing</span>
+            <div class="bar-track"><div class="bar-fill danger" id="barPhishing" style="width: 0%"></div></div>
+            <span class="bar-value" id="barPhishingVal">0%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Credential Lure</span>
+            <div class="bar-track"><div class="bar-fill warning" id="barCredential" style="width: 0%"></div></div>
+            <span class="bar-value" id="barCredentialVal">0%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Unsafe URLs</span>
+            <div class="bar-track"><div class="bar-fill danger" id="barUnsafe" style="width: 0%"></div></div>
+            <span class="bar-value" id="barUnsafeVal">0%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Finance Scam</span>
+            <div class="bar-track"><div class="bar-fill warning" id="barFinance" style="width: 0%"></div></div>
+            <span class="bar-value" id="barFinanceVal">0%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Impersonation</span>
+            <div class="bar-track"><div class="bar-fill" id="barImpersonation" style="width: 0%"></div></div>
+            <span class="bar-value" id="barImpersonationVal">0%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Social Eng.</span>
+            <div class="bar-track"><div class="bar-fill success" id="barSocial" style="width: 0%"></div></div>
+            <span class="bar-value" id="barSocialVal">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scan History -->
+      <div class="panel" id="historySection">
+        <div class="panel-header">
+          <h2><i data-lucide="clock"></i> Scan History</h2>
+          <div class="pill" id="historyPill">0 scans</div>
+        </div>
+        <div class="history-list" id="historyList">
+          <div class="empty-state" id="historyEmpty">
+            <i data-lucide="inbox"></i>
+            <p>No scans yet. Start by analyzing an email or URL.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ===== TERMINAL LOGS SECTION ===== -->
+    <section id="terminalSection" class="full-width" aria-label="Terminal Logs">
+      <div class="panel">
+        <div class="panel-header">
+          <h2><i data-lucide="terminal"></i> Terminal Logs</h2>
+          <div class="pill">Live Output</div>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar" aria-hidden="true">
+            <div class="terminal-dot"></div>
+            <div class="terminal-dot"></div>
+            <div class="terminal-dot"></div>
+            <span class="terminal-title">threat-analyzer — bash</span>
+          </div>
+          <div class="log-list" id="logList" role="log" aria-live="polite" aria-label="System logs"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS SECTION ===== -->
+    <section id="settingsSection" class="full-width" aria-label="Settings">
+      <div class="panel">
+        <div class="panel-header">
+          <h2><i data-lucide="sliders-horizontal"></i> Settings</h2>
+          <div class="pill">Controls</div>
+        </div>
+        <div class="settings-list">
+
+          <!-- Dark Mode -->
+          <div class="setting-item">
+            <div class="setting-info">
+              <strong>Dark Mode</strong>
+              <p>Toggle between light and dark interface theme.</p>
+            </div>
+            <label class="toggle-switch" aria-label="Toggle dark mode">
+              <input type="checkbox" id="themeToggle" checked>
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <!-- Sensitivity -->
+          <div class="setting-item">
+            <div class="setting-info">
+              <strong>Detection Sensitivity</strong>
+              <p>Adjust how aggressively threats are scored.</p>
+            </div>
+            <div class="sensitivity-selector" role="radiogroup" aria-label="Detection sensitivity">
+              <button class="sensitivity-option" data-level="low" role="radio" aria-checked="false">Low</button>
+              <button class="sensitivity-option active" data-level="medium" role="radio" aria-checked="true">Medium</button>
+              <button class="sensitivity-option" data-level="high" role="radio" aria-checked="false">High</button>
+            </div>
+          </div>
+
+          <!-- Export -->
+          <div class="setting-item">
+            <div class="setting-info">
+              <strong>Export Report</strong>
+              <p>Download the latest scan result as a JSON report.</p>
+            </div>
+            <button class="action-btn" id="exportBtn" aria-label="Export scan report">
+              <i data-lucide="download"></i>
+              Export
+            </button>
+          </div>
+
+          <!-- Clear History -->
+          <div class="setting-item">
+            <div class="setting-info">
+              <strong>Clear History</strong>
+              <p>Remove all saved scan records and reset statistics.</p>
+            </div>
+            <button class="action-btn danger" id="clearHistoryBtn" aria-label="Clear all scan history">
+              <i data-lucide="trash-2"></i>
+              Clear All
+            </button>
+          </div>
+
+        </div>
+      </div>
     </section>
 
   </main>
 
 </div>
 
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="script.js"></script>
 
 </body>
