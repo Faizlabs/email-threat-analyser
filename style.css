@@ -341,11 +341,13 @@ a {
   background: rgba(0, 0, 0, 0.5);
   z-index: 90;
   opacity: 0;
+  pointer-events: none;
   transition: opacity var(--duration-normal);
 }
 
 .sidebar-overlay.visible {
   opacity: 1;
+  pointer-events: auto;
 }
 
 /* ========================
